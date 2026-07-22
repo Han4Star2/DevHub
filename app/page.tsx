@@ -2,10 +2,6 @@ import {
   getLandingAggregateStats,
   getLandingShowcaseGames,
 } from "@/lib/db/queries/games";
-
-// Revalidate periodically so live stats and the showcase don't go stale
-// between builds — ingestion runs every 15-30 min, so 5 min is plenty fresh.
-export const revalidate = 300;
 import { Hero } from "@/components/landing/Hero";
 import { LiveStats } from "@/components/landing/LiveStats";
 import { ValueProps } from "@/components/landing/ValueProps";

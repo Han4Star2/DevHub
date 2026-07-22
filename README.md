@@ -1,8 +1,8 @@
 # Core Vision (DevHub)
 
-The professional platform for the Roblox economy. This is the first build
-slice: **Landing**, **Discover**, and the flagship **Game Analytics** page,
-backed by real data pulled from Roblox's public APIs.
+The professional platform for the Roblox economy. Built so far: **Landing**,
+**Discover**, the flagship **Game Analytics** page (backed by real data
+pulled from Roblox's public APIs), and **accounts + a personal Dashboard**.
 
 ## Stack
 
@@ -59,20 +59,34 @@ minutes if deploying there.
 
 ## Database
 
-- `games` — static/slow-changing game info (name, studio, genre, thumbnail).
+- `games` — static/slow-changing game info (name, studio, genre, thumbnail,
+  optional `owner_id` once claimed by a user).
 - `game_stats_snapshots` — time-series CCU/visits/favorites/votes.
 - `latest_game_stats` — a view exposing each game's most recent snapshot,
-  used by Discover's sort/filter queries.
+  used by Discover's and the Dashboard's sort/filter queries.
+- `users` / `sessions` — email+password accounts with opaque, cookie-backed
+  sessions (scrypt password hashing, no third-party auth provider).
 
 Schema lives in `lib/db/schema.ts`; migrations are generated with
 `npm run db:generate` and applied with `npm run db:migrate`.
 
-## Scope of this slice
+## Accounts & Dashboard
+
+Sign up / log in at `/signup` and `/login` (email + password, no email
+verification yet). `/dashboard` is a protected page showing a user's claimed
+games and combined CCU/visits. Claiming a game is currently **self-service**
+by universe ID — any logged-in user can claim any unclaimed tracked game;
+there's no ownership verification (e.g. confirming Roblox group/creator
+membership) yet, which is a known gap to close before this goes further than
+an MVP.
+
+## Scope so far
 
 In: Landing page, Discover (search/sort/filter), Game Analytics (CCU/visits/
 favorites/like-ratio charts with moving averages and growth deltas), the
-ingestion pipeline.
+ingestion pipeline, accounts, and a personal Dashboard with self-service game
+claiming.
 
-Deliberately out for now: accounts/auth, dashboards, developer/studio
+Deliberately out for now: verified game ownership, developer/studio
 profiles, marketplace, job board, watchlists, messaging, community, public
 API, billing, admin panel, AI features, mobile app.

@@ -12,6 +12,35 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: text("email").notNull(),
+    passwordHash: text("password_hash").notNull(),
+    name: text("name"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [uniqueIndex("users_email_idx").on(table.email)],
+);
+
+export const sessions = pgTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(), // opaque random session token
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("sessions_user_id_idx").on(table.userId)],
+);
+
 export const games = pgTable(
   "games",
   {
@@ -28,6 +57,9 @@ export const games = pgTable(
     iconUrl: text("icon_url"),
     verified: boolean("verified").notNull().default(false),
     isActive: boolean("is_active").notNull().default(true),
+    ownerId: uuid("owner_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -40,6 +72,7 @@ export const games = pgTable(
     uniqueIndex("games_slug_idx").on(table.slug),
     index("games_genre_idx").on(table.genre),
     index("games_is_active_idx").on(table.isActive),
+    index("games_owner_id_idx").on(table.ownerId),
   ],
 );
 
@@ -89,3 +122,7 @@ export type Game = typeof games.$inferSelect;
 export type NewGame = typeof games.$inferInsert;
 export type GameStatsSnapshot = typeof gameStatsSnapshots.$inferSelect;
 export type NewGameStatsSnapshot = typeof gameStatsSnapshots.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type Session = typeof sessions.$inferSelect;
+export type NewSession = typeof sessions.$inferInsert;
