@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1784747262994,
+      "tag": "0000_cool_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784747262995,
+      "tag": "0001_latest_game_stats_view",
+      "breakpoints": true
+    }
+  ]
+}
