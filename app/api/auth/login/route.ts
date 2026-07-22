@@ -16,7 +16,9 @@ export async function POST(request: Request) {
   if (!email || !password) return genericError;
 
   const user = await getUserByEmail(email);
-  if (!user) return genericError;
+  // Accounts created via "Sign in with Roblox" have no password to check
+  // against - they can only authenticate through /api/auth/roblox/start.
+  if (!user || !user.passwordHash) return genericError;
 
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) return genericError;

@@ -81,21 +81,56 @@ minutes if deploying there.
 - `game_stats_snapshots` — time-series CCU/visits/favorites/votes.
 - `latest_game_stats` — a view exposing each game's most recent snapshot,
   used by Discover's and the Dashboard's sort/filter queries.
-- `users` / `sessions` — email+password accounts with opaque, cookie-backed
-  sessions (scrypt password hashing, no third-party auth provider).
+- `users` / `sessions` — email+password or Roblox-OAuth accounts (scrypt
+  password hashing when applicable), opaque cookie-backed sessions, no
+  third-party auth provider. `password_hash` is nullable for Roblox-only
+  accounts; `roblox_user_id`/`roblox_username` are set when linked via
+  Roblox.
 
 Schema lives in `lib/db/schema.ts`; migrations are generated with
 `npm run db:generate` and applied with `npm run db:migrate`.
 
 ## Accounts & Dashboard
 
-Sign up / log in at `/signup` and `/login` (email + password, no email
-verification yet). `/dashboard` is a protected page showing a user's claimed
-games and combined CCU/visits. Claiming a game is currently **self-service**
-by universe ID — any logged-in user can claim any unclaimed tracked game;
-there's no ownership verification (e.g. confirming Roblox group/creator
-membership) yet, which is a known gap to close before this goes further than
-an MVP.
+Sign up / log in at `/signup` and `/login` — either email + password, or
+**Sign in with Roblox**. `/dashboard` is a protected page showing a user's
+claimed games and combined CCU/visits. Claiming a game is currently
+**self-service** by universe ID — any logged-in user can claim any unclaimed
+tracked game; there's no ownership verification (e.g. confirming Roblox
+group/creator membership) yet, which is a known gap to close before this
+goes further than an MVP.
+
+## Roblox OAuth ("Sign in with Roblox")
+
+Uses Roblox's standard OAuth 2.0 authorization-code flow with PKCE
+(`lib/auth/roblox-oauth.ts`; routes at `/api/auth/roblox/start` and
+`/api/auth/roblox/callback`). Roblox's `openid profile` scope doesn't include
+email, so Roblox-authenticated accounts get a synthesized placeholder email
+and a `null` password — they can only log back in through Roblox, not the
+email/password form. First-time Roblox sign-in auto-generates a Core Vision
+username from their Roblox display name (editable afterward in
+`/settings/profile`).
+
+**Setup (required before the button works — without it, it fails gracefully
+with a "not set up yet" message instead of crashing):**
+
+1. Go to `create.roblox.com` → your account → **Credentials/OAuth Apps**
+   (under Open Cloud / API settings) and create a new OAuth app.
+2. Set its redirect URL to `<your deployed domain>/api/auth/roblox/callback`
+   exactly (must match what the app sends).
+3. Set three env vars (locally in `.env`, and separately in your host's
+   environment variables — e.g. Vercel project settings):
+   - `APP_BASE_URL` — your deployed origin, e.g. `https://your-app.vercel.app`
+     (no trailing slash). Used to build the exact redirect URI.
+   - `ROBLOX_OAUTH_CLIENT_ID`
+   - `ROBLOX_OAUTH_CLIENT_SECRET` — treat like a password, never commit it.
+
+Note: this flow talks to `apis.roblox.com`, which couldn't be reached from
+the sandbox this was built in (network policy), so the live token
+exchange/userinfo calls are implemented against Roblox's documented OAuth
+API shape but untested end-to-end — test the full round trip once you have
+real credentials wired up, and report back if the token/userinfo response
+shapes don't match what's expected.
 
 ## Developer Profiles
 

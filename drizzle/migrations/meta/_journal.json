@@ -29,6 +29,13 @@
       "when": 1784750398432,
       "tag": "0003_fearless_dakota_north",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784751948818,
+      "tag": "0004_cultured_fixer",
+      "breakpoints": true
     }
   ]
 }

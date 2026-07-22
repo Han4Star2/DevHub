@@ -17,7 +17,8 @@ export const users = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     email: text("email").notNull(),
-    passwordHash: text("password_hash").notNull(),
+    // Nullable: accounts created via "Sign in with Roblox" have no password.
+    passwordHash: text("password_hash"),
     name: text("name"),
     // Nullable: existing users predate profiles and set this later via
     // /settings/profile. New signups are required to set one immediately.
@@ -25,6 +26,9 @@ export const users = pgTable(
     bio: text("bio"),
     skills: text("skills"), // comma-separated for MVP; no tags table yet
     avatarUrl: text("avatar_url"),
+    // Roblox OAuth identity, when signed up/linked via Roblox.
+    robloxUserId: text("roblox_user_id"),
+    robloxUsername: text("roblox_username"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -32,6 +36,7 @@ export const users = pgTable(
   (table) => [
     uniqueIndex("users_email_idx").on(table.email),
     uniqueIndex("users_username_idx").on(table.username),
+    uniqueIndex("users_roblox_user_id_idx").on(table.robloxUserId),
   ],
 );
 
