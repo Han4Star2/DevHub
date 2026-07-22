@@ -20,6 +20,12 @@ export async function NavBar() {
               <Link href="/dashboard" className="hover:text-white">
                 Dashboard
               </Link>
+              <Link
+                href={user.username ? `/developers/${user.username}` : "/settings/profile"}
+                className="hover:text-white"
+              >
+                Profile
+              </Link>
               <LogoutButton />
             </>
           ) : (

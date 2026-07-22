@@ -19,11 +19,20 @@ export const users = pgTable(
     email: text("email").notNull(),
     passwordHash: text("password_hash").notNull(),
     name: text("name"),
+    // Nullable: existing users predate profiles and set this later via
+    // /settings/profile. New signups are required to set one immediately.
+    username: text("username"),
+    bio: text("bio"),
+    skills: text("skills"), // comma-separated for MVP; no tags table yet
+    avatarUrl: text("avatar_url"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
-  (table) => [uniqueIndex("users_email_idx").on(table.email)],
+  (table) => [
+    uniqueIndex("users_email_idx").on(table.email),
+    uniqueIndex("users_username_idx").on(table.username),
+  ],
 );
 
 export const sessions = pgTable(

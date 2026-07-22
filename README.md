@@ -2,7 +2,8 @@
 
 The professional platform for the Roblox economy. Built so far: **Landing**,
 **Discover**, the flagship **Game Analytics** page (backed by real data
-pulled from Roblox's public APIs), and **accounts + a personal Dashboard**.
+pulled from Roblox's public APIs), **accounts + a personal Dashboard**, and
+**public Developer Profiles**.
 
 ## Stack
 
@@ -96,13 +97,23 @@ there's no ownership verification (e.g. confirming Roblox group/creator
 membership) yet, which is a known gap to close before this goes further than
 an MVP.
 
+## Developer Profiles
+
+Every user gets a public profile at `/developers/[username]` (username is
+required at signup, or set later at `/settings/profile`). It shows their bio,
+skills, claimed games, combined/lifetime stats, and achievement badges.
+Achievements are computed from real tracked data only — "1M+ Visits" and
+"Top 100 by CCU" — not the "Featured Game" or "Innovation" badges from the
+original vision doc, since those need editorial/admin curation this MVP
+doesn't have.
+
 ## Scope so far
 
 In: Landing page, Discover (search/sort/filter), Game Analytics (CCU/visits/
 favorites/like-ratio charts with moving averages and growth deltas), the
-ingestion pipeline, accounts, and a personal Dashboard with self-service game
-claiming.
+ingestion pipeline, accounts, a personal Dashboard with self-service game
+claiming, and public Developer Profiles with computed achievements.
 
-Deliberately out for now: verified game ownership, developer/studio
-profiles, marketplace, job board, watchlists, messaging, community, public
-API, billing, admin panel, AI features, mobile app.
+Deliberately out for now: verified game ownership, studio profiles,
+marketplace, job board, watchlists, messaging, community, public API,
+billing, admin panel, AI features, mobile app.

@@ -17,7 +17,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     const body = {
       email: formData.get("email"),
       password: formData.get("password"),
-      ...(mode === "signup" ? { name: formData.get("name") } : {}),
+      ...(mode === "signup"
+        ? { name: formData.get("name"), username: formData.get("username") }
+        : {}),
     };
 
     const res = await fetch(`/api/auth/${mode}`, {
@@ -41,17 +43,37 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {mode === "signup" && (
-        <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-sm text-white/60">
-            Name
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
-          />
-        </div>
+        <>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="name" className="text-sm text-white/60">
+              Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="username" className="text-sm text-white/60">
+              Username
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              required
+              pattern="[a-z0-9-]{3,30}"
+              title="3-30 characters: lowercase letters, numbers, and hyphens"
+              placeholder="your-handle"
+              className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
+            />
+            <p className="text-xs text-white/40">
+              This becomes your public profile URL: /developers/your-handle
+            </p>
+          </div>
+        </>
       )}
       <div className="flex flex-col gap-1">
         <label htmlFor="email" className="text-sm text-white/60">
