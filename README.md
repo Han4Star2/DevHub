@@ -71,8 +71,14 @@ itself only exposes current-point-in-time stats, so the time series is ours
 to build.
 
 In production, wire `/api/cron/ingest` (protected by `CRON_SECRET`) to a
-scheduler — `vercel.json` already configures Vercel Cron to hit it every 30
-minutes if deploying there.
+scheduler:
+- **Vercel**: `vercel.json` already configures Vercel Cron to hit it every 30
+  minutes.
+- **Netlify**: `netlify/functions/ingest-cron.mts` is a Netlify Scheduled
+  Function (same 30-minute cadence) that calls `/api/cron/ingest` with the
+  `CRON_SECRET` bearer token — Netlify ignores `vercel.json`, so this exists
+  separately. Requires `APP_BASE_URL` and `CRON_SECRET` set in Netlify's env
+  vars (same values as the main app's).
 
 ## Database
 
