@@ -39,6 +39,22 @@ Recharts for charts.
    npm run dev
    ```
 
+## Using Supabase for Postgres
+
+Instead of local Docker Postgres, you can point this at a Supabase project:
+
+1. Create a project at supabase.com.
+2. In **Project Settings → Database → Connect**, copy both connection
+   strings it gives you:
+   - The **transaction pooler** URL (port `6543`, `?pgbouncer=true`) → set as
+     `DATABASE_URL`. This is what the running app uses.
+   - The **session pooler / direct** URL (port `5432`) → set as `DIRECT_URL`.
+     Migrations need this — Supabase's transaction pooler doesn't support the
+     session-level behavior `drizzle-kit` relies on.
+3. Fill in the real password in your `.env` (never commit it or paste it into
+   chat/logs — treat it like any other production secret).
+4. Run `npm run db:migrate` — it uses `DIRECT_URL` when present.
+
 ## Data ingestion
 
 `scripts/seed.ts` reads `scripts/starter-games.json` — a list of Roblox
